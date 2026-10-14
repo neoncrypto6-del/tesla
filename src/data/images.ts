@@ -1,0 +1,21 @@
+export const images = {
+  logo: "/Tacye.png",
+  heroModelY: "/T1.jpg",
+  heroModel3: "/t2.jpg",
+  interiorWhite: "/t3.jpg",
+  interiorBlack: "/744ab97c-5d1f-45c1-b513-a8b3157f0f34.jpg",
+  modelS: "/0adcd651-eff5-4eec-ae69-ecc29a9994a5.jpg",
+  modelX: "/b1acf3b7-c84f-4b7f-a10c-2b898b819840.jpg",
+  cybertruck: "/5cf61557-4698-46ea-8ccc-b7d7b8d0566e.jpg",
+  modelYL: "/2f34a363-19d5-4844-b42d-fab665a63b30.jpg",
+  fsd1: "/bcdc2821-95f6-4254-8597-88ee5194e7c3.jpg",
+  fsd2: "/7087accb-fbae-43a1-8706-81eb997ae2c1.jpg",
+  fsd3: "/974ae733-5ef1-41b5-b349-9f04553748bd.jpg",
+  fsd4: "/f215e37b-27b8-4bde-a085-d0b0d1512aee.jpg",
+  fsd5: "/593da37d-35a6-4308-af86-4eea629c2e3c.jpg",
+  solar: "/ea22a3e7-589b-4f01-bba8-4a5665e99cb9.jpg",
+  supercharger: "/f74d80d3-494e-4d83-82cb-7dc0daea5846.jpg",
+  semi: "/4e76008b-233b-4c5f-be84-1d3b403719aa.jpg",
+  powerwall: "/badc9fe8-9058-4ab7-b4a9-ad4771dcd68e.jpg",
+  shop: "/310afcac-6781-4624-8f4c-82fc1892aaf1.jpg"
+};
