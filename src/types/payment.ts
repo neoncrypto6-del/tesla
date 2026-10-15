@@ -15,7 +15,7 @@ export type WireTransferDetails = {
 
 export type FinancingMethod = {
   enabled: boolean;
-  value: string; // paypal email, zelle phone, venmo handle, cashapp $tag
+  value: string;
   note: string;
 };
 
@@ -23,6 +23,7 @@ export type CryptoMethod = {
   enabled: boolean;
   address: string;
   network?: string;
+  qr_url: string; // NEW: uploaded QR image URL
   note: string;
 };
 
