@@ -2,11 +2,17 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { useAuth } from '../contexts/AuthContext';
-import { chargingSummary, fsdOption, interiorOptions, MIN_DEPOSIT, paintOptions } from '../data/configurator';
+import {
+  chargingSummary,
+  fsdOption,
+  interiorOptions,
+  MIN_DEPOSIT,
+  paintOptions,
+} from '../data/configurator';
 import { Vehicle } from '../types/vehicle';
 import { OrderConfig, PaymentPlan } from '../types/order';
 import { createOrder, savePendingCart } from '../utils/orders';
-import { formatPrice } from '../utils/currency';
+import { discountedPrice, formatPrice } from '../utils/currency';
 
 type Status = 'idle' | 'submitting' | 'error';
 
@@ -30,15 +36,21 @@ export function useOrder(vehicle: Vehicle | undefined, initialTrimId: string | n
   const paint = paintOptions.find((p) => p.id === paintId) ?? paintOptions[0];
   const interior = interiorOptions.find((i) => i.id === interiorId) ?? interiorOptions[0];
 
-  const total = (trim?.price ?? 0) + paint.price + interior.price + (fsd ? fsdOption.price : 0);
+  // 40% off the vehicle base price. Options stay at full price.
+  const baseDiscounted = discountedPrice(trim?.price ?? 0);
+  const optionsTotal = paint.price + interior.price + (fsd ? fsdOption.price : 0);
+  const total = baseDiscounted + optionsTotal;
+
   const payNowAmount = Number(payNow) || 0;
   const dueToday = plan === 'full' ? total : payNowAmount;
   const balance = Math.max(0, total - dueToday);
 
   const payNowError =
-  plan === 'installment' && payNow !== '' && (payNowAmount < MIN_DEPOSIT || payNowAmount > total) ?
-  `Enter an amount between ${formatPrice(MIN_DEPOSIT)} and ${formatPrice(total)}.` :
-  '';
+    plan === 'installment' &&
+    payNow !== '' &&
+    (payNowAmount < MIN_DEPOSIT || payNowAmount > total)
+      ? `Enter an amount between ${formatPrice(MIN_DEPOSIT)} and ${formatPrice(total)}.`
+      : '';
 
   const selectInterior = (id: string) => {
     setInteriorId(id);
@@ -65,14 +77,16 @@ export function useOrder(vehicle: Vehicle | undefined, initialTrimId: string | n
       interior: interior.name,
       full_self_driving: fsd,
       charging_option: chargingSummary,
-      total_price: total,
+      total_price: total, // already discounted
       payment_plan: plan,
-      initial_amount: dueToday
+      initial_amount: dueToday,
     };
 
     if (!user) {
       savePendingCart(config);
-      toast('Sign in to continue', { description: `Your ${vehicle.name} will be saved to your cart.` });
+      toast('Sign in to continue', {
+        description: `Your ${vehicle.name} will be saved to your cart.`,
+      });
       navigate('/signin?redirect=/cart');
       return;
     }
@@ -110,6 +124,6 @@ export function useOrder(vehicle: Vehicle | undefined, initialTrimId: string | n
     setView,
     setPlan,
     setPayNow,
-    submit
+    submit,
   };
 }
