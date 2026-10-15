@@ -32,6 +32,7 @@ export function PaymentSettingsPanel() {
   const { settings, loading, reload } = usePaymentSettings();
   const [draft, setDraft] = useState<PaymentSettings | null>(null);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState<'usdt' | 'btc' | null>(null);
   const [msg, setMsg] = useState<string | null>(null);
 
   useEffect(() => {
@@ -52,6 +53,42 @@ export function PaymentSettingsPanel() {
       return next;
     });
   };
+
+  async function handleQrUpload(
+    e: React.ChangeEvent<HTMLInputElement>,
+    key: 'usdt' | 'btc'
+  ) {
+    const file = e.target.files?.[0];
+    e.target.value = ''; // allow re-selecting the same file later
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      setMsg('Please choose an image file (PNG, JPG, SVG).');
+      return;
+    }
+    if (file.size > 2 * 1024 * 1024) {
+      setMsg('Image is too large. Maximum 2 MB.');
+      return;
+    }
+
+    setUploading(key);
+    setMsg(null);
+    try {
+      const ext = (file.name.split('.').pop() || 'png').toLowerCase();
+      const path = `${key}-${Date.now()}.${ext}`;
+      const { error: upErr } = await supabase.storage
+        .from('payment-qr')
+        .upload(path, file, { upsert: true, contentType: file.type });
+      if (upErr) throw upErr;
+      const { data } = supabase.storage.from('payment-qr').getPublicUrl(path);
+      set(`financing_partner.${key}.qr_url`, data.publicUrl);
+      setMsg('QR image uploaded. Click Save to publish it.');
+    } catch (err: any) {
+      setMsg('Upload failed: ' + (err.message || 'unknown error'));
+    } finally {
+      setUploading(null);
+    }
+  }
 
   async function save() {
     if (!draft) return;
@@ -164,16 +201,20 @@ export function PaymentSettingsPanel() {
         <div className="space-y-4">
           {financingRows.map(({ key, label, isCrypto }) => {
             const cfg = fp[key] as any;
+            const cryptoKey = key as 'usdt' | 'btc';
             return (
               <div key={key} className="rounded-md border border-gray-200 p-3">
                 <label className="mb-3 flex items-center gap-2">
                   <input
                     type="checkbox"
                     checked={!!cfg.enabled}
-                    onChange={(e) => set(`financing_partner.${key}.enabled`, e.target.checked)}
+                    onChange={(e) =>
+                      set(`financing_partner.${key}.enabled`, e.target.checked)
+                    }
                   />
                   <span className="text-sm font-medium text-gray-900">{label}</span>
                 </label>
+
                 {cfg.enabled && (
                   <div className="grid gap-3 sm:grid-cols-2">
                     {isCrypto ? (
@@ -190,6 +231,54 @@ export function PaymentSettingsPanel() {
                             onChange={(v) => set(`financing_partner.${key}.network`, v)}
                           />
                         )}
+
+                        {/* QR image upload */}
+                        <div className="sm:col-span-2">
+                          <span className="mb-1 block text-xs font-medium text-gray-600">
+                            QR code image
+                          </span>
+                          <div className="flex items-center gap-4">
+                            {cfg.qr_url ? (
+                              <img
+                                src={cfg.qr_url}
+                                alt={`${label} QR`}
+                                className="h-20 w-20 rounded border border-gray-200 bg-white object-contain p-1"
+                              />
+                            ) : (
+                              <div className="flex h-20 w-20 items-center justify-center rounded border border-dashed border-gray-300 text-center text-[10px] text-gray-400">
+                                No image
+                              </div>
+                            )}
+                            <div className="flex flex-col gap-2">
+                              <label className="cursor-pointer rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50">
+                                {uploading === cryptoKey
+                                  ? 'Uploading…'
+                                  : cfg.qr_url
+                                  ? 'Replace image'
+                                  : 'Upload image'}
+                                <input
+                                  type="file"
+                                  accept="image/*"
+                                  className="hidden"
+                                  disabled={uploading !== null}
+                                  onChange={(e) => handleQrUpload(e, cryptoKey)}
+                                />
+                              </label>
+                              {cfg.qr_url && (
+                                <button
+                                  type="button"
+                                  onClick={() => set(`financing_partner.${key}.qr_url`, '')}
+                                  className="text-left text-xs text-red-600 hover:underline"
+                                >
+                                  Remove image
+                                </button>
+                              )}
+                            </div>
+                          </div>
+                          <p className="mt-1 text-xs text-gray-500">
+                            PNG, JPG or SVG. Max 2 MB. Shown to customers when they select {label}.
+                          </p>
+                        </div>
                       </>
                     ) : (
                       <Field
@@ -214,7 +303,7 @@ export function PaymentSettingsPanel() {
       <div className="flex items-center gap-3">
         <button
           onClick={save}
-          disabled={saving}
+          disabled={saving || uploading !== null}
           className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
         >
           {saving ? 'Saving…' : 'Save payment details'}
