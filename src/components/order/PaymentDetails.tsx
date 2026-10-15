@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { QRCodeSVG } from 'qrcode.react';
 import type { FinancingKey, PaymentSettings } from '../../types/payment';
 
 type MethodKind = 'bank' | 'wire' | 'financing' | null;
@@ -62,17 +61,19 @@ function CryptoDetails({
   title,
   address,
   network,
+  qrUrl,
   note,
 }: {
   title: string;
   address: string;
   network?: string;
+  qrUrl?: string;
   note: string;
 }) {
   if (!address) {
     return <p className="text-sm text-gray-500">{title} address not set.</p>;
   }
-  const payload = title === 'BTC' ? `bitcoin:${address}` : address;
+
   return (
     <div>
       <p className="mb-2 text-sm font-semibold text-gray-900">
@@ -80,9 +81,17 @@ function CryptoDetails({
         {network ? ` · ${network}` : ''}
       </p>
       <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center">
-        <div className="rounded-md border border-gray-200 bg-white p-2">
-          <QRCodeSVG value={payload} size={140} />
-        </div>
+        {qrUrl ? (
+          <img
+            src={qrUrl}
+            alt={`${title} QR code`}
+            className="h-36 w-36 rounded-md border border-gray-200 bg-white object-contain p-1"
+          />
+        ) : (
+          <div className="flex h-36 w-36 items-center justify-center rounded-md border border-dashed border-gray-300 p-2 text-center text-xs text-gray-400">
+            QR code not uploaded yet
+          </div>
+        )}
         <div>
           <p className="mb-1 text-xs text-gray-500">Send only {title} to this address</p>
           <CopyLine value={address} />
@@ -175,6 +184,7 @@ export default function PaymentDetails({ method, settings }: Props) {
               title={financing === 'usdt' ? 'USDT' : 'BTC'}
               address={fp[financing].address}
               network={'network' in fp[financing] ? (fp[financing] as any).network : undefined}
+              qrUrl={fp[financing].qr_url}
               note={fp[financing].note}
             />
           ) : (
