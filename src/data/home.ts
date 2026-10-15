@@ -6,7 +6,7 @@ export const heroSlides = [
 {
   id: 'model-y',
   title: 'Model Y',
-  subtitle: 'Starting at $39,990 with 0% APR available',
+  subtitle: 'Starting at $29,340 with 40% off available',
   image: images.heroModelY,
   tone: 'dark' as HeroTone,
   primary: { label: 'Order Now', to: '/order/model-y' },
@@ -15,7 +15,7 @@ export const heroSlides = [
 {
   id: 'model-3',
   title: 'Model 3',
-  subtitle: 'Lease from $349/mo for a limited time',
+  subtitle: 'Own from $22,194 now for a limited time',
   image: images.heroModel3,
   tone: 'dark' as HeroTone,
   primary: { label: 'Order Now', to: '/order/model-3' },
