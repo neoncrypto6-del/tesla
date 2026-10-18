@@ -22,5 +22,5 @@ export const images = {
   roadsterRear: '/roadster-rear.jpg',
   roadsterDark: '/roadster-dark.jpg',
   roadsterInterior: '/roadster-interior.jpg',
-  roadsterDoors: '/roadster-doors.jpg',
+  roadsterDoors: '/roadster-doors.jpg', 
 };
