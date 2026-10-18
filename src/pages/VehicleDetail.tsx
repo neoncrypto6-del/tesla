@@ -147,6 +147,41 @@ export function VehicleDetail() {
           </div>
         </section>
 
+        {/* --- ROADSTER GALLERY SECTION --- */}
+        {vehicle.slug === 'roadster' && (
+          <section className={`px-6 py-20 ${panelClass}`}>
+            <div className="mx-auto max-w-[1280px]">
+              <h2 className={`text-3xl font-medium tracking-tight md:text-4xl mb-8 ${textClass}`}>
+                Explore the Design
+              </h2>
+              <div className="grid gap-6 md:grid-cols-3">
+                <div className="group overflow-hidden rounded-xl">
+                  <img
+                    src={images.roadsterDark}
+                    alt="Roadster Studio"
+                    className="h-64 w-full object-cover transition-transform duration-500 group-hover:scale-105 md:h-[400px]"
+                  />
+                </div>
+                <div className="group overflow-hidden rounded-xl">
+                  <img
+                    src={images.roadsterRear}
+                    alt="Roadster Thrusters"
+                    className="h-64 w-full object-cover transition-transform duration-500 group-hover:scale-105 md:h-[400px]"
+                  />
+                </div>
+                <div className="group overflow-hidden rounded-xl">
+                  <img
+                    src={images.roadsterDoors}
+                    alt="Roadster Doors"
+                    className="h-64 w-full object-cover transition-transform duration-500 group-hover:scale-105 md:h-[400px]"
+                  />
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
+        {/* -------------------------------- */}
+
         <section className={`grid items-center gap-10 px-6 py-16 lg:grid-cols-[1.4fr_1fr] lg:px-16 ${panelClass}`}>
           <img
             src={isDark ? images.roadsterInterior : images.interiorWhite}
