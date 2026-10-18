@@ -14,6 +14,7 @@ export type Vehicle = {
   tagline: string;
   description: string;
   image: string;
+  theme?: 'light' | 'dark'; // <-- Added this line for the black theme
   trims: Trim[];
 };
 
