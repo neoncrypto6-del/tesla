@@ -17,10 +17,12 @@ export const images = {
   supercharger: "/f74d80d3-494e-4d83-82cb-7dc0daea5846.jpg",
   semi: "/4e76008b-233b-4c5f-be84-1d3b403719aa.jpg",
   powerwall: "/badc9fe8-9058-4ab7-b4a9-ad4771dcd68e.jpg",
-  shop: "/310afcac-6781-4624-8f4c-82fc1892aaf1.jpg"
-  roadsterHero: '/roadster-hero.jpg',
-  roadsterRear: '/roadster-rear.jpg',
-  roadsterDark: '/roadster-dark.jpg',
-  roadsterInterior: '/roadster-interior.jpg',
-  roadsterDoors: '/roadster-doors.jpg', 
+  shop: "/310afcac-6781-4624-8f4c-82fc1892aaf1.jpg",
+  
+  // New Roadster Images
+  roadsterHero: "/roadster-hero.jpg",
+  roadsterRear: "/roadster-rear.jpg",
+  roadsterDark: "/roadster-dark.jpg",
+  roadsterInterior: "/roadster-interior.jpg",
+  roadsterDoors: "/roadster-doors.jpg",
 };
