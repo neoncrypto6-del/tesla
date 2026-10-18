@@ -32,14 +32,25 @@ export function Order() {
     );
   }
 
+  // --- THEME LOGIC ---
+  const isDark = vehicle.theme === 'dark';
+  const bgClass = isDark ? 'bg-black' : 'bg-white';
+  const textClass = isDark ? 'text-white' : 'text-ink';
+  const textMutedClass = isDark ? 'text-gray-400' : 'text-muted';
+  const panelClass = isDark ? 'bg-zinc-900' : 'bg-panel';
+  const borderClass = isDark ? 'border-zinc-800' : 'border-line';
+  const ringClass = isDark ? 'ring-zinc-800' : 'ring-line';
+  const bottomBarClass = isDark ? 'bg-zinc-900/95 border-zinc-800' : 'bg-white/95 border-panel';
+  // -------------------
+
   const previewImage = order.view === 'interior' ? order.interior.image : vehicle.image;
 
   return (
-    <div className="w-full bg-white">
+    <div className={`w-full transition-colors duration-300 ${bgClass} ${textClass}`}>
       <Header />
       <main className="pt-14 lg:grid lg:grid-cols-[minmax(0,1fr)_440px]">
         <section
-          className="relative bg-panel lg:sticky lg:top-14 lg:h-[calc(100vh-3.5rem)]"
+          className={`relative lg:sticky lg:top-14 lg:h-[calc(100vh-3.5rem)] ${panelClass}`}
           aria-label="Vehicle preview"
         >
           <div className="relative h-[45vh] w-full overflow-hidden lg:h-full">
@@ -73,7 +84,7 @@ export function Order() {
               ))}
             </div>
             {order.view === 'exterior' && (
-              <div className="absolute left-4 top-4 flex items-center gap-2 rounded-full bg-white/85 px-3 py-1.5 text-xs font-medium backdrop-blur">
+              <div className="absolute left-4 top-4 flex items-center gap-2 rounded-full bg-white/85 px-3 py-1.5 text-xs font-medium text-black backdrop-blur">
                 <span
                   className="h-3 w-3 rounded-full ring-1 ring-black/10"
                   style={{ backgroundColor: order.paint.hex }}
@@ -86,7 +97,7 @@ export function Order() {
 
         <section className="px-6 pb-48 pt-10 lg:px-10" aria-label="Configure your vehicle">
           <h1 className="text-center text-4xl font-medium tracking-tight">{vehicle.name}</h1>
-          <p className="mt-1 text-center text-sm text-muted">Est. delivery: 4–6 weeks</p>
+          <p className={`mt-1 text-center text-sm ${textMutedClass}`}>Est. delivery: 4–6 weeks</p>
 
           <div className="mt-8 space-y-3" role="radiogroup" aria-label="Model">
             {vehicle.trims.map((t) => {
@@ -98,14 +109,16 @@ export function Order() {
                   aria-checked={selected}
                   onClick={() => order.setTrimId(t.id)}
                   className={`w-full rounded-lg p-4 text-left ring-inset transition-shadow duration-150 ${
-                    selected ? 'ring-2 ring-ink' : 'ring-1 ring-line hover:ring-muted'
+                    selected 
+                      ? (isDark ? 'ring-2 ring-white' : 'ring-2 ring-ink') 
+                      : `ring-1 ${ringClass} hover:ring-muted`
                   }`}
                 >
                   <div className="flex items-start justify-between gap-4">
                     <span className="text-sm font-medium">{t.name}</span>
-                    <PriceTag original={t.price} size="sm" />
+                    <PriceTag original={t.price} size="sm" isDark={isDark} />
                   </div>
-                  <div className="mt-2 flex gap-4 text-xs text-muted">
+                  <div className={`mt-2 flex gap-4 text-xs ${textMutedClass}`}>
                     <span>{t.range}</span>
                     <span>{t.zeroToSixty} 0-60</span>
                     <span>{t.topSpeed}</span>
@@ -133,7 +146,7 @@ export function Order() {
                     title={p.name}
                     onClick={() => order.selectPaint(p.id)}
                     className={`h-11 w-11 rounded-full p-[3px] transition-shadow duration-150 ${
-                      selected ? 'ring-2 ring-brand' : 'ring-1 ring-transparent hover:ring-line'
+                      selected ? 'ring-2 ring-brand' : `ring-1 ring-transparent hover:${ringClass}`
                     }`}
                   >
                     <span
@@ -145,7 +158,7 @@ export function Order() {
               })}
             </div>
             <p className="mt-4 text-sm font-medium">{order.paint.name}</p>
-            <p className="text-xs text-muted">{formatAddOn(order.paint.price)}</p>
+            <p className={`text-xs ${textMutedClass}`}>{formatAddOn(order.paint.price)}</p>
           </div>
 
           <div className="mt-14 text-center">
@@ -161,7 +174,7 @@ export function Order() {
                     aria-label={i.name}
                     onClick={() => order.selectInterior(i.id)}
                     className={`h-11 w-11 rounded-full p-[3px] transition-shadow duration-150 ${
-                      selected ? 'ring-2 ring-brand' : 'ring-1 ring-transparent hover:ring-line'
+                      selected ? 'ring-2 ring-brand' : `ring-1 ring-transparent hover:${ringClass}`
                     }`}
                   >
                     <span className="flex h-full w-full overflow-hidden rounded-full ring-1 ring-inset ring-black/10">
@@ -179,28 +192,28 @@ export function Order() {
               })}
             </div>
             <p className="mt-4 text-sm font-medium">{order.interior.name}</p>
-            <p className="text-xs text-muted">{formatAddOn(order.interior.price)}</p>
+            <p className={`text-xs ${textMutedClass}`}>{formatAddOn(order.interior.price)}</p>
           </div>
 
           <div className="mt-14">
             <h2 className="text-center text-2xl font-medium">Full Self-Driving (Supervised)</h2>
-            <div className="mt-5 rounded-lg p-5 ring-1 ring-line">
-              <p className="text-sm text-ink">{fsdOption.description}</p>
+            <div className={`mt-5 rounded-lg p-5 ring-1 ${ringClass}`}>
+              <p className={`text-sm ${textClass}`}>{fsdOption.description}</p>
               <ul className="mt-4 space-y-2">
                 {fsdOption.features.map((f) => (
-                  <li key={f} className="flex items-start gap-2 text-sm text-muted">
-                    <CheckIcon className="mt-0.5 h-4 w-4 shrink-0 text-ink" />
+                  <li key={f} className={`flex items-start gap-2 text-sm ${textMutedClass}`}>
+                    <CheckIcon className={`mt-0.5 h-4 w-4 shrink-0 ${textClass}`} />
                     {f}
                   </li>
                 ))}
               </ul>
-              <label className="mt-5 flex cursor-pointer items-center justify-between gap-4 border-t border-panel pt-4">
+              <label className={`mt-5 flex cursor-pointer items-center justify-between gap-4 border-t pt-4 ${borderClass}`}>
                 <span className="flex items-center gap-3">
                   <input
                     type="checkbox"
                     checked={order.fsd}
                     onChange={(e) => order.setFsd(e.target.checked)}
-                    className="h-5 w-5 rounded border-line accent-brand"
+                    className={`h-5 w-5 rounded accent-brand ${isDark ? 'border-zinc-700 bg-zinc-800' : 'border-line'}`}
                   />
                   <span className="text-sm font-medium">Add Full Self-Driving</span>
                 </span>
@@ -209,21 +222,25 @@ export function Order() {
             </div>
           </div>
 
-          <ChargingSection />
+          <div className={`${isDark ? 'text-white' : ''}`}>
+             <ChargingSection />
+          </div>
 
-          <PaymentPlanSection
-            plan={order.plan}
-            onPlanChange={order.setPlan}
-            payNow={order.payNow}
-            onPayNowChange={order.setPayNow}
-            total={order.total}
-            balance={order.balance}
-            error={order.payNowError}
-          />
+          <div className={`${isDark ? 'text-white' : ''}`}>
+            <PaymentPlanSection
+              plan={order.plan}
+              onPlanChange={order.setPlan}
+              payNow={order.payNow}
+              onPayNowChange={order.setPayNow}
+              total={order.total}
+              balance={order.balance}
+              error={order.payNowError}
+            />
+          </div>
         </section>
       </main>
 
-      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-panel bg-white/95 backdrop-blur lg:left-auto lg:w-[440px]">
+      <div className={`fixed inset-x-0 bottom-0 z-40 border-t backdrop-blur lg:left-auto lg:w-[440px] ${bottomBarClass}`}>
         <div className="px-6 py-4 lg:px-10">
           {order.status === 'error' && (
             <p role="alert" className="mb-3 rounded bg-red-50 px-3 py-2 text-xs text-red-700">
@@ -231,11 +248,11 @@ export function Order() {
             </p>
           )}
           <div className="flex items-baseline justify-between">
-            <span className="text-sm text-muted">Vehicle total</span>
+            <span className={`text-sm ${textMutedClass}`}>Vehicle total</span>
             <span className="text-sm font-medium">{formatPrice(order.total)}</span>
           </div>
           <div className="mb-3 mt-1 flex items-baseline justify-between">
-            <span className="text-sm text-muted">
+            <span className={`text-sm ${textMutedClass}`}>
               {order.plan === 'full' ? 'Due today (paid fully)' : 'Paying now'}
             </span>
             <span className="text-xl font-medium">{formatPrice(order.dueToday)}</span>
